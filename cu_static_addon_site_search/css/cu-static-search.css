@@ -1,14 +1,15 @@
 /**
  * CuStaticAddonSiteSearch - minimal styles.
  *
- * 既存テーマに bs-search-result 系のCSSがある場合はそちらが優先される想定で、
+ * 検索結果ページは実テーマの search.php を書き出したものであり、テーマに
+ * bs-search-result 系のCSSがある場合はそちらが優先される想定。
  * ここでは無スタイル環境でも最低限読める補助スタイルのみを提供する。
  *
  * @copyright Copyright (c) catchup (https://catchup.co.jp/)
  * @license   MIT License
  */
 
-.cu-search-count {
+.bs-search__result-text {
   margin: 0.5em 0;
   font-size: 0.9em;
   color: #666;
@@ -54,24 +55,4 @@
 .cu-search-more-btn {
   cursor: pointer;
   padding: 0.4em 1.2em;
-}
-
-/* 最小・自己完結の検索結果ページ用の軽いレイアウト */
-.cu-search-page {
-  max-width: 720px;
-  margin: 2em auto;
-  padding: 0 1em;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN",
-    Meiryo, sans-serif;
-}
-
-.cu-search-page .bs-search-form {
-  display: flex;
-  gap: 0.5em;
-  margin: 1em 0 1.5em;
-}
-
-.cu-search-page .cu-search-input {
-  flex: 1;
-  padding: 0.5em;
 }

@@ -1,13 +1,16 @@
 /**
  * CuStaticAddonSiteSearch - client-side site search for static HTML.
  *
- * 静的サイト上で bc-search-index 由来の JSON インデックスを読み込み、
- * クライアントサイドで絞り込み検索を行う（依存ライブラリなし）。
+ * 静的書き出しされた検索結果ページ（実テーマ）上で、bc-search-index 由来の
+ * JSON インデックスを読み込みクライアントサイド検索を行う（依存ライブラリなし）。
  *
  * 動作:
- *  - 既存のテーマ検索フォーム（input[name="q"] を持つ form）を乗っ取り、
- *    送信を抑止して同一ページ内に結果を描画する。
- *  - ページの ?q= がある場合は読み込み時に自動検索する（検索結果ページ用）。
+ *  - CuStatic 書き出し時に検索結果ページへ注入される（data-cu-static-search-page
+ *    マーカー付き script）。マーカーが無いページでは何もしない。
+ *  - URL の ?q=（キーワード）/ ?f=（フォルダ絞り込み）/ ?s=（サイトID）を解釈し、
+ *    ロード時に必ず結果領域（.bs-search-result）と件数表示を描画し直す。
+ *  - ページ上の検索フォームは submit を抑止して同一ページ内で即時描画し、
+ *    pushState で URL を同期する（インクリメンタル検索対応）。
  *  - 結果は bc-search-index のテーマと同じ bs-search-result__* 構造で描画し、
  *    既存CSSを流用できるようにする。
  *
@@ -17,26 +20,31 @@
 (function () {
   'use strict';
 
+  var script = document.querySelector('script[data-cu-static-search-page]');
+  if (!script) {
+    // 検索結果ページ以外では動作しない
+    return;
+  }
   if (window.__cuStaticSearchInit) {
     return;
   }
   window.__cuStaticSearchInit = true;
 
-  var currentScript = document.currentScript;
-
   /** アセット/JSON の配置ベースパス（例 "/cu_static_addon_site_search/"）。 */
   function resolveBase() {
-    if (currentScript && currentScript.getAttribute('data-cu-static-search-base')) {
-      return currentScript.getAttribute('data-cu-static-search-base');
+    if (script.getAttribute('data-cu-static-search-base')) {
+      return script.getAttribute('data-cu-static-search-base');
     }
-    if (currentScript && currentScript.src) {
+    if (script.src) {
       // .../cu_static_addon_site_search/js/cu-static-search.js -> .../cu_static_addon_site_search/
-      return currentScript.src.replace(/js\/cu-static-search\.js.*$/, '');
+      return script.src.replace(/js\/cu-static-search\.js.*$/, '');
     }
     return '/cu_static_addon_site_search/';
   }
 
   var BASE = resolveBase();
+  var PAGE_SITE_ID = script.getAttribute('data-site-id') || '';
+  var LIMIT_STEP = 20;
   var indexCache = null;
   var indexPromise = null;
 
@@ -51,11 +59,17 @@
   }
 
   /**
-   * 現在サイトに対応するインデックスURLを決定する。
-   * sites.json（[{id, alias}]）を見て、パスの先頭セグメントが alias に一致すれば
-   * そのサイト別ファイル、なければ統合 search-index.json を使う。
+   * インデックスURLを決定する。優先順:
+   *  1. URL の ?s=（サイトID）
+   *  2. script の data-site-id（書き出し時のサイトID）
+   *  3. sites.json の alias 前方一致
+   *  4. 全サイト統合 search-index.json
    */
   function resolveIndexUrl() {
+    var s = new URLSearchParams(location.search).get('s') || PAGE_SITE_ID;
+    if (s && /^\d+$/.test(s)) {
+      return Promise.resolve(BASE + 'search-index-' + s + '.json');
+    }
     return fetchJson(BASE + 'sites.json')
       .then(function (sites) {
         var path = location.pathname.replace(/^\//, '');
@@ -111,11 +125,20 @@
   }
 
   /** レコードが全キーワードを含むか（title + detail 対象）。 */
-  function matches(row, terms) {
+  function matchesTerms(row, terms) {
     var haystack = ((row.title || '') + ' ' + (row.detail || '')).toLowerCase();
     return terms.every(function (t) {
       return haystack.indexOf(t) !== -1;
     });
+  }
+
+  /** レコードがフォルダ（f= Contents.id）配下か。サーバ側の lft/rght 絞り込みと同義。 */
+  function matchesFolder(row, folderId) {
+    if (!folderId) {
+      return true;
+    }
+    var ids = row.folder_ids || [];
+    return ids.indexOf(folderId) !== -1;
   }
 
   /** HTML エスケープ。 */
@@ -165,30 +188,96 @@
     return out;
   }
 
+  // --- ページ要素の特定 -------------------------------------------------
+
+  var form =
+    document.querySelector('.bs-search-form form') ||
+    document.querySelector('form[action*="bc-search-index/search_indexes/search"]');
+  var resultEl = document.querySelector('.bs-search-result');
+
+  if (!resultEl) {
+    // テーマが bc-front 既定構造でない場合は静かに無効化
+    if (window.console && console.warn) {
+      console.warn('[cu-static-search] .bs-search-result が見つからないため検索を無効化しました。');
+    }
+    return;
+  }
+
+  var inputQ = form ? form.querySelector('input[name="q"], input[type="search"]') : null;
+  var selectF = form ? form.querySelector('select[name="f"]') : null;
+
+  /** 件数表示エリア（list_counter 互換）。無ければ .bs-search-header 内に生成する。 */
+  function counterEl() {
+    var el = document.querySelector('.bs-search__result-text');
+    if (el) {
+      return el;
+    }
+    var header = document.querySelector('.bs-search-header');
+    if (!header) {
+      return null;
+    }
+    el = document.createElement('div');
+    el.className = 'bs-search__result-text';
+    header.insertBefore(el, header.firstChild);
+    return el;
+  }
+
+  /** 表示件数リンク（list_num）はクリックで q が失われるため非表示にする。 */
+  function hideListNum() {
+    var el = document.querySelector('.bs-list-num');
+    if (el) {
+      el.style.display = 'none';
+    }
+  }
+
+  // --- 描画 ---------------------------------------------------------------
+
+  /** 件数表示を描画する（list_counter 互換の文言）。 */
+  function renderCounter(q, total, shownCount) {
+    var el = counterEl();
+    if (!el) {
+      return;
+    }
+    if (!q) {
+      el.innerHTML = '';
+      return;
+    }
+    var end = Math.min(shownCount, total);
+    el.innerHTML =
+      '<strong>' + esc(q) + '</strong> で検索した結果 ' +
+      '<strong>' + (total ? 1 : 0) + '</strong>〜<strong>' + end + '</strong>件目 / ' +
+      total + ' 件';
+  }
+
   /** 結果を bs-search-result__* 構造で描画する。 */
-  function render(container, rows, terms, limit) {
+  function renderResults(rows, terms, limit, q) {
     if (!terms.length) {
-      container.innerHTML =
+      renderCounter('', 0, 0);
+      resultEl.innerHTML =
         '<p class="bs-search-result__no-data">検索キーワードを入力してください。</p>';
       return;
     }
     if (!rows.length) {
-      container.innerHTML =
+      renderCounter(q, 0, 0);
+      resultEl.innerHTML =
         '<p class="bs-search-result__no-data">該当する結果が存在しませんでした。</p>';
       return;
     }
 
     var shown = rows.slice(0, limit);
-    var html = '<p class="cu-search-count">' + rows.length + ' 件見つかりました。</p>';
+    renderCounter(q, rows.length, shown.length);
+
+    var html = '';
     shown.forEach(function (row) {
       var title = highlight(esc(row.title), terms);
       var body = highlight(esc(snippet(row.detail, terms, 100)), terms);
       var url = esc(row.url);
+      var fullUrl = esc(location.origin + row.url);
       html +=
         '<div class="bs-search-result__item">' +
         '<h3 class="bs-search-result__item-head"><a href="' + url + '">' + title + '</a></h3>' +
         '<p class="bs-search-result__item-body">' + body + '</p>' +
-        '<p class="bs-search-result__item-link"><small><a href="' + url + '">' + url + '</a></small></p>' +
+        '<p class="bs-search-result__item-link"><small><a href="' + url + '">' + fullUrl + '</a></small></p>' +
         '</div>';
     });
 
@@ -196,105 +285,113 @@
       html +=
         '<p class="cu-search-more"><button type="button" class="cu-search-more-btn">もっと見る</button></p>';
     }
-    container.innerHTML = html;
+    resultEl.innerHTML = html;
 
-    var moreBtn = container.querySelector('.cu-search-more-btn');
+    var moreBtn = resultEl.querySelector('.cu-search-more-btn');
     if (moreBtn) {
       moreBtn.addEventListener('click', function () {
-        render(container, rows, terms, limit + 20);
+        renderResults(rows, terms, limit + LIMIT_STEP, q);
       });
     }
   }
 
-  /** 検索を実行して描画する。 */
-  function runSearch(container, q) {
+  /** 現在の条件（q, f）で検索して描画する。 */
+  function runSearch(q, f) {
     var terms = parseTerms(q);
+    var folderId = parseInt(f, 10) || 0;
     loadIndex().then(function (index) {
       var rows = terms.length
         ? index.filter(function (row) {
-            return matches(row, terms);
+            return matchesTerms(row, terms) && matchesFolder(row, folderId);
           })
         : [];
-      render(container, rows, terms, 20);
+      renderResults(rows, terms, LIMIT_STEP, q);
     });
   }
 
-  /** フォーム直後（または指定 data 属性）に結果コンテナを用意する。 */
-  function ensureResultContainer(form) {
-    var explicit = document.querySelector('[data-cu-static-search-result]');
-    if (explicit) {
-      return explicit;
+  // --- URL 同期 -------------------------------------------------------------
+
+  /** フォームの現在値から検索し、URL を履歴へ反映する。 */
+  function applyFromForm(pushHistory) {
+    var q = inputQ ? inputQ.value : '';
+    var f = selectF ? selectF.value : '';
+    var params = new URLSearchParams(location.search);
+    if (q) {
+      params.set('q', q);
+    } else {
+      params.delete('q');
     }
-    var existing = document.querySelector('.bs-search-result');
-    if (existing) {
-      return existing;
+    if (f) {
+      params.set('f', f);
+    } else {
+      params.delete('f');
     }
-    var container = document.createElement('section');
-    container.className = 'bs-search-result';
-    container.setAttribute('data-cu-static-search-result', '');
-    form.parentNode.insertBefore(container, form.nextSibling);
-    return container;
+    var qs = params.toString();
+    var newUrl = location.pathname + (qs ? '?' + qs : '') + location.hash;
+    if (pushHistory) {
+      history.pushState(null, '', newUrl);
+    } else {
+      history.replaceState(null, '', newUrl);
+    }
+    runSearch(q, f);
   }
 
-  /** 既存の検索フォームを乗っ取る。 */
-  function enhanceForm(form) {
-    var input = form.querySelector('input[name="q"], input[type="search"]');
-    if (!input) {
-      return;
+  /** URL の現在値をフォームへ同期して検索する（初期表示・popstate 用）。 */
+  function applyFromUrl() {
+    var params = new URLSearchParams(location.search);
+    var q = params.get('q') || '';
+    var f = params.get('f') || '';
+    if (inputQ) {
+      inputQ.value = q;
     }
-    var container = ensureResultContainer(form);
-    var timer = null;
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      runSearch(container, input.value);
-    });
-
-    // インクリメンタル検索（入力から少し待って実行）
-    input.addEventListener('input', function () {
-      if (timer) {
-        clearTimeout(timer);
-      }
-      timer = setTimeout(function () {
-        runSearch(container, input.value);
-      }, 250);
-    });
+    if (selectF) {
+      selectF.value = f;
+    }
+    runSearch(q, f);
   }
 
-  /** クエリ文字列から q を取り出す。 */
-  function queryParam(name) {
-    var m = new RegExp('[?&]' + name + '=([^&]*)').exec(location.search);
-    return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : '';
-  }
+  // --- イベント -------------------------------------------------------------
 
   function init() {
-    var forms = document.querySelectorAll('form');
-    var enhanced = [];
-    Array.prototype.forEach.call(forms, function (form) {
-      if (form.querySelector('input[name="q"], input[type="search"]')) {
-        enhanceForm(form);
-        enhanced.push(form);
-      }
-    });
+    hideListNum();
 
-    // ?q= が指定されていれば読み込み時に自動検索（検索結果ページ・深リンク用）
-    var q = queryParam('q');
-    if (q) {
-      var container =
-        document.querySelector('[data-cu-static-search-result]') ||
-        document.querySelector('.bs-search-result');
-      if (!container && enhanced.length) {
-        container = ensureResultContainer(enhanced[0]);
-      }
-      if (container) {
-        // フォームがあれば入力欄へ値を反映
-        var input = document.querySelector('form input[name="q"], form input[type="search"]');
-        if (input) {
-          input.value = q;
+    if (form) {
+      var timer = null;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (timer) {
+          clearTimeout(timer);
         }
-        runSearch(container, q);
+        applyFromForm(true);
+      });
+
+      if (inputQ) {
+        // インクリメンタル検索（入力から少し待って実行。履歴は汚さない）
+        inputQ.addEventListener('input', function () {
+          if (timer) {
+            clearTimeout(timer);
+          }
+          timer = setTimeout(function () {
+            applyFromForm(false);
+          }, 250);
+        });
+      }
+
+      if (selectF) {
+        selectF.addEventListener('change', function () {
+          applyFromForm(true);
+        });
       }
     }
+
+    window.addEventListener('popstate', function () {
+      applyFromUrl();
+    });
+
+    // ロード時は必ず URL パラメータに基づいて描画し直す
+    // （書き出し時の0件状態のHTMLを、qなし=「キーワードを入力」表示等で上書きする）
+    applyFromUrl();
   }
 
   if (document.readyState === 'loading') {
