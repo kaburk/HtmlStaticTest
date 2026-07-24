@@ -160,13 +160,20 @@
     return '';
   }
 
-  // group_field が同じ複数入力は一致必須（メール再入力等。VALID_GROUP_COMPLATE 相当）
+  function validExList(field) {
+    return String(field.validEx || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+  }
+
+  // group_valid が同じフィールドへのグループ検証（bc-mail の MailMessagesTable 準拠）。
+  // group_field は「姓/名」等の表示上のグループ化であり検証には使わない。
+  //  - VALID_EMAIL_CONFIRM: 同グループの値一致（メール再入力等）
+  //  - VALID_GROUP_COMPLATE: グループ内は全部空か全部入力のどちらかのみ許可
   function validateGroups(form, def) {
     var errors = {};
     var groups = {};
     def.fields.forEach(function (f) {
-      if (f.group) {
-        (groups[f.group] = groups[f.group] || []).push(f);
+      if (f.groupValid) {
+        (groups[f.groupValid] = groups[f.groupValid] || []).push(f);
       }
     });
     Object.keys(groups).forEach(function (g) {
@@ -175,12 +182,39 @@
         return;
       }
       var values = fields.map(function (f) { return getValue(form, f).trim(); });
-      var allFilled = values.every(function (v) { return v !== ''; });
-      if (allFilled && values.some(function (v) { return v !== values[0]; })) {
-        errors[fields[fields.length - 1].name] = '入力データが一致していません。';
+
+      var confirmFields = fields.filter(function (f) {
+        return validExList(f).indexOf('VALID_EMAIL_CONFIRM') !== -1;
+      });
+      if (confirmFields.length) {
+        var allFilled = values.every(function (v) { return v !== ''; });
+        if (allFilled && values.some(function (v) { return v !== values[0]; })) {
+          confirmFields.forEach(function (f) {
+            errors[f.name] = '入力データが一致していません。';
+          });
+        }
+      }
+
+      var completeFields = fields.filter(function (f) {
+        return validExList(f).indexOf('VALID_GROUP_COMPLATE') !== -1;
+      });
+      if (completeFields.length >= 2) {
+        var cValues = completeFields.map(function (f) { return getValue(form, f).trim(); });
+        var filled = cValues.filter(function (v) { return v !== ''; }).length;
+        if (filled > 0 && filled < completeFields.length) {
+          completeFields.forEach(function (f, i) {
+            if (cValues[i] === '' && !errors[f.name]) {
+              errors[f.name] = '入力データが不完全です。';
+            }
+          });
+        }
       }
     });
     return errors;
+  }
+
+  function errorSpanId(name) {
+    return 'cu-mf-error-' + name.replace(/[^a-zA-Z0-9_-]/g, '_');
   }
 
   function errorSpanFor(form, field) {
@@ -189,7 +223,7 @@
       return null;
     }
     var input = inputs[inputs.length - 1];
-    var id = 'cu-mf-error-' + field.name.replace(/[^a-zA-Z0-9_-]/g, '_');
+    var id = errorSpanId(field.name);
     var span = document.getElementById(id);
     if (!span) {
       span = document.createElement('span');
@@ -239,14 +273,23 @@
       var inputs = fieldInputs(form, field.name);
       inputs.forEach(function (input) {
         var handler = function () {
-          var message = validateField(form, field);
-          if (!message) {
-            var groupErrors = validateGroups(form, def);
-            if (groupErrors[field.name]) {
-              message = groupErrors[field.name];
-            }
-          }
+          var groupErrors = field.groupValid ? validateGroups(form, def) : {};
+          var message = validateField(form, field) || groupErrors[field.name] || '';
           showFieldError(form, field, message);
+          // 同じ検証グループでエラー表示中の相手フィールドも再評価する
+          // （こちら側の修正で相手の一致/不完全エラーが解消されるため）
+          if (field.groupValid) {
+            def.fields.forEach(function (other) {
+              if (other === field || other.groupValid !== field.groupValid) {
+                return;
+              }
+              var span = document.getElementById(errorSpanId(other.name));
+              if (!span || !span.textContent) {
+                return;
+              }
+              showFieldError(form, other, validateField(form, other) || groupErrors[other.name] || '');
+            });
+          }
         };
         input.addEventListener('blur', handler);
         input.addEventListener('change', handler);
