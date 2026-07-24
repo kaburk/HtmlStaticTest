@@ -109,13 +109,15 @@
     if (!inputs.length) {
       return '';
     }
+    // bc-mail は radio / checkbox の先頭に同名の hidden input を出力するため、
+    // inputs[0] の type ではなくフィールド定義の type で判定する
     var type = (inputs[0].type || '').toLowerCase();
-    if (field.type === 'multi_check' || type === 'checkbox') {
-      var checked = inputs.filter(function (i) { return i.checked; }).map(function (i) { return i.value; });
+    if (field.type === 'multi_check' || field.type === 'check' || type === 'checkbox') {
+      var checked = inputs.filter(function (i) { return i.type === 'checkbox' && i.checked; }).map(function (i) { return i.value; });
       return checked.join(', ');
     }
-    if (type === 'radio') {
-      var sel = inputs.filter(function (i) { return i.checked; });
+    if (field.type === 'radio' || type === 'radio') {
+      var sel = inputs.filter(function (i) { return i.type === 'radio' && i.checked; });
       return sel.length ? sel[0].value : '';
     }
     if (inputs[0].tagName === 'SELECT' && inputs[0].multiple) {
@@ -135,6 +137,11 @@
   var TEL_RE = /^[0-9+\-()\s]+$/;
 
   function validateField(form, field) {
+    // 定義にあるがページに存在しないフィールドは検証しない
+    // （エラー表示先が無く「エラーなしで送信不能」になるのを防ぐ。サーバ側検証が最終防衛線）
+    if (!fieldInputs(form, field.name).length) {
+      return '';
+    }
     var value = getValue(form, field).trim();
 
     if (field.required && value === '') {
@@ -498,6 +505,12 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (!validateAll(form, def)) {
+        // エラー項目が画面外にあると「押しても何も起きない」ように見えるため、
+        // 最初のエラー項目までスクロールする
+        var firstInvalid = form.querySelector('.cu-mf-invalid');
+        if (firstInvalid && firstInvalid.scrollIntoView) {
+          firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
         return;
       }
       if (endpoint.useConfirm && def.useConfirm) {
