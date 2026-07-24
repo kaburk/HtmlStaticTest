@@ -1,1 +1,1 @@
-{"backend":"bcmail_api","bcmailApiBase":"https://localhost","external":{"type":"","action":"","publicKey":"","serviceId":"","templateId":""},"endpoint":{"url":""},"useConfirm":true,"honeypot":true,"honeypotField":"cu_mf_hp"}
+{"backend":"bcmail_api","bcmailApiBase":"","external":{"type":"","action":"","publicKey":"","serviceId":"","templateId":""},"endpoint":{"url":""},"useConfirm":true,"honeypot":true,"honeypotField":"cu_mf_hp"}
