@@ -354,7 +354,8 @@
     }
     // 既定: bc-mail 公開API
     var base = endpoint.bcmailApiBase || '';
-    var url = base + '/baser/api/bc-mail/mail-messages/add/' + def.mailContentId + '.json';
+    // InflectedRoute のため controller はアンダースコア区切り（mail_messages）
+    var url = base + '/baser/api/bc-mail/mail_messages/add/' + def.mailContentId + '.json';
     return fetch(url, { method: 'POST', body: new FormData(form), credentials: 'same-origin' })
       .then(function (res) {
         return res.json().then(function (data) {
