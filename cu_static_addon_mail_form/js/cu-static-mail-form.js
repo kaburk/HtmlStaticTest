@@ -497,6 +497,16 @@
       form.appendChild(hp);
     }
 
+    // bc-mail の動的フロー用JS（mail_token.js 等）は書き出し時に除去されるが、
+    // 古い書き出しやテーマ独自のスクリプトが送信ボタンを無効化している場合に備えて復帰させる
+    var restoreSubmitButtons = function () {
+      Array.prototype.slice.call(form.querySelectorAll('[type="submit"]')).forEach(function (btn) {
+        btn.disabled = false;
+        btn.style.pointerEvents = '';
+      });
+    };
+    restoreSubmitButtons();
+
     bindRealtime(form, def);
 
     var doSend = function (restore) {
@@ -527,6 +537,8 @@
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      // 他スクリプトがクリック時にボタンを無効化していても再試行できるようにする
+      restoreSubmitButtons();
       if (!validateAll(form, def)) {
         // エラー項目が画面外にあると「押しても何も起きない」ように見えるため、
         // 最初のエラー項目までスクロールする
