@@ -1,0 +1,77 @@
+/**
+ * CuStaticAddonSiteSearch - minimal styles.
+ *
+ * 既存テーマに bs-search-result 系のCSSがある場合はそちらが優先される想定で、
+ * ここでは無スタイル環境でも最低限読める補助スタイルのみを提供する。
+ *
+ * @copyright Copyright (c) catchup (https://catchup.co.jp/)
+ * @license   MIT License
+ */
+
+.cu-search-count {
+  margin: 0.5em 0;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.bs-search-result__item {
+  margin: 0 0 1.2em;
+  padding: 0 0 1em;
+  border-bottom: 1px solid #eee;
+}
+
+.bs-search-result__item-head {
+  margin: 0 0 0.3em;
+  font-size: 1.1em;
+}
+
+.bs-search-result__item-body {
+  margin: 0 0 0.3em;
+  line-height: 1.6;
+}
+
+.bs-search-result__item-link small {
+  color: #888;
+  word-break: break-all;
+}
+
+.bs-search-result__item mark,
+.bs-search-result__item-head mark {
+  background: #fff2a8;
+  padding: 0 0.1em;
+}
+
+.bs-search-result__no-data {
+  margin: 1em 0;
+  color: #666;
+}
+
+.cu-search-more {
+  margin: 1em 0;
+  text-align: center;
+}
+
+.cu-search-more-btn {
+  cursor: pointer;
+  padding: 0.4em 1.2em;
+}
+
+/* 最小・自己完結の検索結果ページ用の軽いレイアウト */
+.cu-search-page {
+  max-width: 720px;
+  margin: 2em auto;
+  padding: 0 1em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN",
+    Meiryo, sans-serif;
+}
+
+.cu-search-page .bs-search-form {
+  display: flex;
+  gap: 0.5em;
+  margin: 1em 0 1.5em;
+}
+
+.cu-search-page .cu-search-input {
+  flex: 1;
+  padding: 0.5em;
+}

@@ -1,0 +1,91 @@
+/**
+ * CuStaticAddonMailForm - front styles (minimal).
+ *
+ * @copyright Copyright (c) catchup (https://catchup.co.jp/)
+ * @license   MIT License
+ */
+
+.cu-mf-error {
+  display: block;
+  margin-top: 4px;
+  color: #c0392b;
+  font-size: 0.85em;
+}
+
+.cu-mf-invalid {
+  border-color: #c0392b !important;
+  outline-color: #c0392b;
+}
+
+.cu-mf-send-error {
+  margin: 1em 0;
+  padding: 0.75em 1em;
+  border: 1px solid #c0392b;
+  border-radius: 4px;
+  background: #fdecea;
+  color: #c0392b;
+}
+
+.cu-mf-confirm {
+  margin: 1em 0;
+}
+
+.cu-mf-confirm__title {
+  margin-bottom: 0.5em;
+  font-size: 1.2em;
+}
+
+.cu-mf-confirm__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+}
+
+.cu-mf-confirm__table th,
+.cu-mf-confirm__table td {
+  padding: 0.6em 0.8em;
+  border: 1px solid #ddd;
+  text-align: left;
+  vertical-align: top;
+}
+
+.cu-mf-confirm__table th {
+  width: 30%;
+  background: #f7f7f7;
+  white-space: nowrap;
+}
+
+.cu-mf-confirm__actions {
+  display: flex;
+  gap: 1em;
+  justify-content: center;
+}
+
+.cu-mf-btn {
+  padding: 0.6em 1.6em;
+  border: 1px solid #888;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.cu-mf-btn--send {
+  border-color: #2d7dd2;
+  background: #2d7dd2;
+  color: #fff;
+}
+
+.cu-mf-btn--send:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.cu-mf-thanks {
+  margin: 1em 0;
+  padding: 1em 1.2em;
+  border: 1px solid #2e7d32;
+  border-radius: 4px;
+  background: #edf7ed;
+  color: #2e7d32;
+}
