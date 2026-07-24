@@ -61,36 +61,15 @@
   /**
    * インデックスURLを決定する。優先順:
    *  1. URL の ?s=（サイトID）
-   *  2. script の data-site-id（書き出し時のサイトID）
-   *  3. sites.json の alias 前方一致
-   *  4. 全サイト統合 search-index.json
+   *  2. script の data-site-id（書き出し時のサイトID。常に埋め込まれる）
+   *  3. メインサイト（site_id=1。サーバ側検索の既定値と同じ）
    */
   function resolveIndexUrl() {
     var s = new URLSearchParams(location.search).get('s') || PAGE_SITE_ID;
-    if (s && /^\d+$/.test(s)) {
-      return Promise.resolve(BASE + 'search-index-' + s + '.json');
+    if (!s || !/^\d+$/.test(s)) {
+      s = '1';
     }
-    return fetchJson(BASE + 'sites.json')
-      .then(function (sites) {
-        var path = location.pathname.replace(/^\//, '');
-        var best = null;
-        (sites || []).forEach(function (site) {
-          var alias = (site.alias || '').replace(/^\/|\/$/g, '');
-          if (alias && (path === alias || path.indexOf(alias + '/') === 0)) {
-            if (!best || alias.length > best.alias.length) {
-              best = { id: site.id, alias: alias };
-            }
-          }
-        });
-        if (best) {
-          return BASE + 'search-index-' + best.id + '.json';
-        }
-        return BASE + 'search-index.json';
-      })
-      .catch(function () {
-        // sites.json が無い場合は統合インデックスにフォールバック
-        return BASE + 'search-index.json';
-      });
+    return BASE + 'search-index-' + s + '.json';
   }
 
   /** インデックスを取得（キャッシュ）。 */
@@ -101,8 +80,7 @@
     if (indexPromise) {
       return indexPromise;
     }
-    indexPromise = resolveIndexUrl()
-      .then(fetchJson)
+    indexPromise = fetchJson(resolveIndexUrl())
       .then(function (data) {
         indexCache = Array.isArray(data) ? data : [];
         return indexCache;
