@@ -309,15 +309,38 @@
   // 確認画面（DOM 差し替え）
   // ---------------------------------------------------------------------------
 
-  function buildConfirmPanel(form, def, onSend, onBack) {
-    var rows = def.fields
+  // 確認画面の行データを組み立てる。bc-mail の入力画面と同じく、
+  // group（group_field）が同じフィールドは1行にまとめ、見出しは先頭フィールドの
+  // head（併記なしの素の見出し）、値は空欄を除いて連結する。
+  function buildConfirmRows(form, def) {
+    var rows = [];
+    var groupIndex = {};
+    def.fields
       .filter(function (f) { return !f.noSend && f.type !== 'hidden'; })
-      .map(function (f) {
+      .forEach(function (f) {
         var value = getValue(form, f);
         if (f.type === 'password') {
           value = value.replace(/./g, '●');
         }
-        return '<tr><th>' + esc(f.label) + '</th><td>' + esc(value).replace(/\n/g, '<br>') + '</td></tr>';
+        if (f.group) {
+          if (groupIndex[f.group] === undefined) {
+            groupIndex[f.group] = rows.length;
+            rows.push({ label: f.head || f.label, values: [] });
+          }
+          if (value !== '') {
+            rows[groupIndex[f.group]].values.push(value);
+          }
+        } else {
+          rows.push({ label: f.label, values: value === '' ? [] : [value] });
+        }
+      });
+    return rows;
+  }
+
+  function buildConfirmPanel(form, def, onSend, onBack) {
+    var rows = buildConfirmRows(form, def)
+      .map(function (r) {
+        return '<tr><th>' + esc(r.label) + '</th><td>' + esc(r.values.join(' ')).replace(/\n/g, '<br>') + '</td></tr>';
       })
       .join('');
 

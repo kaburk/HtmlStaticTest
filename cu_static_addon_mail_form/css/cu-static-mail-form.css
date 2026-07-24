@@ -39,6 +39,7 @@
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1em;
+  table-layout: fixed;
 }
 
 .cu-mf-confirm__table th,
@@ -47,12 +48,13 @@
   border: 1px solid #ddd;
   text-align: left;
   vertical-align: top;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .cu-mf-confirm__table th {
   width: 30%;
   background: #f7f7f7;
-  white-space: nowrap;
 }
 
 .cu-mf-confirm__actions {
