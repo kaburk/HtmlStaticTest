@@ -1,128 +1,207 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <meta charset="utf-8">    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>
-        CakePHP: the rapid development PHP framework:
-        トップページ    </title>
-    <link href="/favicon.ico" type="image/x-icon" rel="icon"><link href="/favicon.ico" type="image/x-icon" rel="shortcut icon">
-    
-	<link rel="stylesheet" href="/css/normalize.min.css">
-	<link rel="stylesheet" href="/css/milligram.min.css">
-	<link rel="stylesheet" href="/css/fonts.css">
-	<link rel="stylesheet" href="/css/cake.css">
-	<link rel="stylesheet" href="/css/home.css">
+	<meta charset="utf-8">	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+	<title>メインサイト</title>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<link href="/favicon.ico" type="image/x-icon" rel="icon"><link href="/favicon.ico" type="image/x-icon" rel="shortcut icon">
+	
+	<link rel="stylesheet" href="/bc_front/css/style.css">
+	<link rel="stylesheet" href="/bc_front/css/jquery-ui/jquery-ui-1.11.4.css">
+	<link rel="stylesheet" href="/bc_front/css/colorbox/colorbox-1.6.1.css">
+	<link rel="stylesheet" href="/bc_front/css/editor.css">
+  <script>var bcI18n = [];</script>	
+	<script src="/bc_front/js/vendor/jquery-1.11.3.min.js"></script>
+	<script src="/bc_front/js/vendor/jquery-ui-1.11.4.min.js"></script>
+	<script src="/bc_front/js/vendor/jquery.bxslider-4.12.min.js"></script>
+	<script src="/bc_front/js/vendor/jquery.colorbox-1.6.1.min.js"></script>
+	<script src="/bc_front/js/vendor/jquery-accessibleMegaMenu.js"></script>
+	<script src="/bc_front/js/vendor/i18n/ui.datepicker-ja.js"></script>
+  <script src="/bc_front/js/common.bundle.js" id="AdminScript" data-baseUrl="" data-baserCorePrefix="baser"></script>	
+	<script src="/bc_front/js/startup.bundle.js"></script>
+	
+<meta name="generator" content="basercms"/><link href="https://localhost/" rel="canonical">
 
-            </head>
-<body>
-    <header>
-        <div class="container text-center">
-            <a href="https://cakephp.org/" target="_blank" rel="noopener">
-                <img alt="CakePHP" src="https://cakephp.org/v2/img/logos/CakePHP_Logo.svg" width="350" />
-            </a>
-            <h1>
-                Welcome to CakePHP 5.0.11 Chiffon (🍰)
-            </h1>
-        </div>
-    </header>
-    <main class="main">
-        <div class="container">
-            <div class="content">
-                <div class="row">
-                    <div class="column">
-                        <div class="message default text-center">
-                            <small>Please be aware that this page will not be shown if you turn off debug mode unless you replace templates/Pages/home.php with your own version.</small>
-                        </div>
-                        <div id="url-rewriting-warning" style="padding: 1rem; background: #fcebea; color: #cc1f1a; border-color: #ef5753;">
-                            <ul>
-                                <li class="bullet problem">
-                                    URL rewriting is not properly configured on your server.<br />
-                                    1) <a target="_blank" rel="noopener" href="https://book.cakephp.org/5/en/installation.html#url-rewriting">Help me configure it</a><br />
-                                    2) <a target="_blank" rel="noopener" href="https://book.cakephp.org/5/en/development/configuration.html#general-configuration">I don't / can't use URL rewriting</a>
-                                </li>
-                            </ul>
-                        </div>
-                                            </div>
-                </div>
-                <div class="row">
-                    <div class="column">
-                        <h4>Environment</h4>
-                        <ul>
-                                                    <li class="bullet success">Your version of PHP is 8.1.0 or higher (detected 8.1.5).</li>
-                        
-                                                    <li class="bullet success">Your version of PHP has the mbstring extension loaded.</li>
-                        
-                                                    <li class="bullet success">Your version of PHP has the openssl extension loaded.</li>
-                        
-                                                    <li class="bullet success">Your version of PHP has the intl extension loaded.</li>
-                                                </ul>
-                    </div>
-                    <div class="column">
-                        <h4>Filesystem</h4>
-                        <ul>
-                                                    <li class="bullet success">Your tmp directory is writable.</li>
-                        
-                                                    <li class="bullet success">Your logs directory is writable.</li>
-                        
-                                                                            <li class="bullet success">The <em>Cake\Cache\Engine\FileEngine</em> is being used for core caching. To change the config edit config/app.php</li>
-                                                </ul>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="column">
-                        <h4>Database</h4>
-                                                <ul>
-                                                    <li class="bullet success">CakePHP is able to connect to the database.</li>
-                                                </ul>
-                    </div>
-                    <div class="column">
-                        <h4>DebugKit</h4>
-                        <ul>
-                                                    <li class="bullet problem">DebugKit is <strong>not</strong> loaded.</li>
-                                                </ul>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="column links">
-                        <h3>Getting Started</h3>
-                        <a target="_blank" rel="noopener" href="https://book.cakephp.org/5/en/">CakePHP Documentation</a>
-                        <a target="_blank" rel="noopener" href="https://book.cakephp.org/5/en/tutorials-and-examples/cms/installation.html">The 20 min CMS Tutorial</a>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="column links">
-                        <h3>Help and Bug Reports</h3>
-                        <a target="_blank" rel="noopener" href="https://slack-invite.cakephp.org/">Slack</a>
-                        <a target="_blank" rel="noopener" href="https://github.com/cakephp/cakephp/issues">CakePHP Issues</a>
-                        <a target="_blank" rel="noopener" href="https://discourse.cakephp.org/">CakePHP Forum</a>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="column links">
-                        <h3>Docs and Downloads</h3>
-                        <a target="_blank" rel="noopener" href="https://api.cakephp.org/">CakePHP API</a>
-                        <a target="_blank" rel="noopener" href="https://bakery.cakephp.org">The Bakery</a>
-                        <a target="_blank" rel="noopener" href="https://book.cakephp.org/5/en/">CakePHP Documentation</a>
-                        <a target="_blank" rel="noopener" href="https://plugins.cakephp.org">CakePHP plugins repo</a>
-                        <a target="_blank" rel="noopener" href="https://github.com/cakephp/">CakePHP Code</a>
-                        <a target="_blank" rel="noopener" href="https://github.com/FriendsOfCake/awesome-cakephp">CakePHP Awesome List</a>
-                        <a target="_blank" rel="noopener" href="https://www.cakephp.org">CakePHP</a>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="column links">
-                        <h3>Training and Certification</h3>
-                        <a target="_blank" rel="noopener" href="https://cakefoundation.org/">Cake Software Foundation</a>
-                        <a target="_blank" rel="noopener" href="https://training.cakephp.org/">CakePHP Training</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+	<!-- /Elements/google_analytics.php -->
+	</head>
+<body id="Home">
+
+
+<div class="bs-container">
+
+	<!-- /Elements/header.php -->
+	
+
+<header class="bs-header">
+	<div class="bs-header__inner">
+		<a href="/index.html" title="baserCMS"><img src="/bc_theme_sample/img/logo.png" class="bs-header__logo" alt="baserCMS"></a>	</div>
+
+	<div class="bs-header__menu-button" id="BsMenuBtn">
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
+
+	<nav class="bs-header__nav use-mega-menu" id="BsMenuContent">
+		<!-- /Elements/global_menu.php -->
+				
+
+	<ul class="ul-level-1 bs-global-menu">
+																			<li class="bs-global-menu-item li-level-1 current">
+						<a href="/index.html" class="bs-global-menu-item--link">トップページ</a>											</li>
+																					<li class="bs-global-menu-item li-level-1">
+						<a href="/news/index.html" class="bs-global-menu-item--link">NEWS</a>											</li>
+																					<li class="bs-global-menu-item li-level-1">
+						<a href="/about.html" class="bs-global-menu-item--link">会社案内</a>											</li>
+																					<li class="bs-global-menu-item li-level-1">
+						<a href="/service/index.html" class="bs-global-menu-item--link">サービス</a>													<div class="bs-global-menu-sub">
+								
+
+	<ul class="menu ul-level-2">
+																			<li class="menu-content li-level-2">
+						<a href="/service/service1.html">サービス１</a>											</li>
+																					<li class="menu-content li-level-2">
+						<a href="/service/service2.html">サービス２</a>											</li>
+																					<li class="menu-content li-level-2">
+						<a href="/service/service3.html">サービス３</a>											</li>
+										</ul>
+							</div>
+											</li>
+																					<li class="bs-global-menu-item li-level-1">
+						<a href="/contact/index.html" class="bs-global-menu-item--link">お問い合わせ</a>											</li>
+																					<li class="bs-global-menu-item li-level-1">
+						<a href="/sample.html" class="bs-global-menu-item--link">サンプル</a>											</li>
+										</ul>
+			</nav>
+
+</header>
+
+			<ul id="MainImage" class="bs-main-image">
+<li><a href="/index.html" title="コーポレートサイトにちょうどいい国産CMS"><img src="/bc_theme_sample/img/main_image_1.jpg" alt="コーポレートサイトにちょうどいい国産CMS" width="100%"></a></li>
+<li><a href="/index.html" title="全て日本語の国産CMSだから、設置も更新も簡単、わかりやすい。"><img src="/bc_theme_sample/img/main_image_2.jpg" alt="全て日本語の国産CMSだから、設置も更新も簡単、わかりやすい。" width="100%"></a></li>
+<li><a href="/index.html" title="標準的なWebサイトに必要な基本機能を全て装備"><img src="/bc_theme_sample/img/main_image_3.jpg" alt="標準的なWebサイトに必要な基本機能を全て装備" width="100%"></a></li>
+<li><a href="/index.html" title="デザインも自由自在にカスタマイズ可能！"><img src="/bc_theme_sample/img/main_image_4.jpg" alt="デザインも自由自在にカスタマイズ可能！" width="100%"></a></li>
+<li><a href="/index.html" title="質問・ご相談はユーザーズフォーラムへ"><img src="/bc_theme_sample/img/main_image_5.jpg" alt="質問・ご相談はユーザーズフォーラムへ" width="100%"></a></li>
+
+</ul>	
+	<div class="bs-wrap clearfix">
+
+		<main class="bs-main-contents">
+			
+							<!-- /Elements/top_info.php -->
+				
+
+<div class="bs-info">
+	<h2 class="bs-info__head">NEWS</h2>
+	
+  <ul class="bs-top-post">
+                <li class="bs-top-post__item post-1 first">
+                  <a href="/news/archives/2.html" class="bs-top-post__item-eye-catch">
+            <img src="/bc_front/files/blog/1/blog_posts/2023/02/00000002_eye_catch.jpg" alt="" width="150" class="img-eye-catch">          </a>
+                <span class="bs-top-post__item-date">2026.08.05</span>
+        <a href="/news/archives/category/release.html" class="bs-top-post__item-category">プレスリリース</a>        <a href="/news/archives/2.html" class="bs-top-post__item-title">ブログ機能について説明します</a>
+                  <div class="bs-top-post__item-detail">この文章はブログ記事の [概要] 欄に入力されています。ブログ記事の一覧にて概要だけを表示す...</div>
+              </li>
+                <li class="bs-top-post__item post-2">
+                  <a href="/news/archives/1.html" class="bs-top-post__item-eye-catch">
+            <img src="/bc_front/files/blog/1/blog_posts/2023/02/00000001_eye_catch.jpg" alt="" width="150" class="img-eye-catch">          </a>
+                <span class="bs-top-post__item-date">2026.08.05</span>
+        <a href="/news/archives/category/release.html" class="bs-top-post__item-category">プレスリリース</a>        <a href="/news/archives/1.html" class="bs-top-post__item-title">メールフォーム機能について説明します</a>
+                  <div class="bs-top-post__item-detail">baserCMSのメールフォームでは、管理画面上にて入力項目を自由に変更することができ、受信...</div>
+              </li>
+                <li class="bs-top-post__item post-3">
+                <span class="bs-top-post__item-date">2026.04.09</span>
+        <a href="/news/archives/category/cat-ibento.html" class="bs-top-post__item-category">イベント</a>        <a href="/news/archives/test-post-0000099.html" class="bs-top-post__item-title">テスト記事タイトル 99：イベントのお知らせ</a>
+                  <div class="bs-top-post__item-detail">イベントの概要テキスト（記事99）イベントの詳細テキスト（記事99）。本文の詳細本文です。...</div>
+              </li>
+                <li class="bs-top-post__item post-4">
+                <span class="bs-top-post__item-date">2026.04.08</span>
+        <a href="/news/archives/category/cat-koramu.html" class="bs-top-post__item-category">コラム</a>        <a href="/news/archives/test-post-0000098.html" class="bs-top-post__item-title">テスト記事タイトル 98：コラムのお知らせ</a>
+                  <div class="bs-top-post__item-detail">コラムの概要テキスト（記事98）コラムの詳細テキスト（記事98）。本文の詳細本文です。...</div>
+              </li>
+                <li class="bs-top-post__item post-5 last">
+                <span class="bs-top-post__item-date">2026.04.07</span>
+        <a href="/news/archives/category/cat-nyusu.html" class="bs-top-post__item-category">ニュース</a>        <a href="/news/archives/test-post-0000097.html" class="bs-top-post__item-title">テスト記事タイトル 97：ニュースのお知らせ</a>
+                  <div class="bs-top-post__item-detail">ニュースの概要テキスト（記事97）ニュースの詳細テキスト（記事97）。本文の詳細本文です。...</div>
+              </li>
+      </ul>
+  <div class="bs-top-post-to-list"><a href="/news/index.html">VIEW ALL</a></div>
+</div>
+			
+			
+
+<h2>baserCMSサンプルテーマ</h2>
+
+<p>これは、baserCMSのサンプルテーマです。<br>
+トップページのこの部分は、固定ページで作られており、NEWS と baserCMS最新情報の部分は、テンプレートで作成されています。<br>
+変更する場合は、/Elements/top_info.php を変更してください。</p>
+
+<h3>グローバルメニューについて</h3>
+
+<p>グローバルメニューは、管理画面の [コンテンツ管理] のツリー構造と連動しています。ツリー構造上においてドラック＆ドロップで並び替えることができ、グローバルメニューに表示したくない場合は、対象コンテンツの編集画面より、[オプション] を開き、[公開ページのメニューより除外する] を選択し保存してください。</p>
+
+<p>また、グローバルメニュー部分を変更する場合は、/Elements/header.php を編集してください。</p>
+
+<h3>サイドバーについて</h3>
+
+<p>サイドバーはウィジェットエリア機能を利用して作られています。管理画面の [設定] &rarr; [ユーティリティ] &rarr; [ウィジェットエリア] より、カスタマイズが可能です。ブログでは「ブログサイドバー」を利用していますが、それ以外のコンテンツでは、「標準サイドバー」を利用しています。</p>
+
+<p>サイト基本設定は、各ブログの [設定] より利用するウィジェットエリアを変更することができます。</p>
+
+<p>また、サイドバー部分を変更する場合は、/Elements/widget_area.php を編集してください。</p>
+
+<h3>初期データについて</h3>
+
+<p>このサンプルテーマは２つの初期データを提供しています。現在利用しているものは「default」でサンプルのデータが入っているものになります。</p>
+
+<p>サンプルデータを入っていないものを利用したい場合は、テーマ管理より「empty」を選択し「初期データ読込」ボタンをクリックしてください。</p>
+
+
+
+			<!-- /Elements/contents_navi.php -->
+			
+
+		</main>
+
+		<section class="bs-sub-contents">
+			<!-- /Elements/widget_area.php -->
+			
+
+<div class="bs-widget-area bs-widget-area-1">
+	
+
+<div class="bs-widget bs-widget-search-box bs-widget-search-box-3">
+    <h2 class="bs-widget-head">サイト内検索</h2>
+    <div class="bs-widget-form">
+        <form method="get" accept-charset="utf-8" novalidate="novalidate" action="/bc-search-index/search_indexes/search.html">                    <label for="f">カテゴリ</label><br>
+            <span class=""><select name="f" id="f"><option value="">指定しない</option><option value="6">サービス</option></select></span>            <br>
+                <span class=""><input type="text" name="q" placeholder="キーワード" id="q" aria-label="キーワード"/></span>        <input type="hidden" name="s" id="s" value="1"/>        <input type="submit" class="bs-button-small" value="検索"/>        </form>    </div>
+</div>
+
+
+<div class="bs-widget bs-widget-text bs-widget-text-4">
+			<h2 class="bs-widget-head">リンク</h2>
+		<ul><li><a href="https://basercms.net" target="_blank">baserCMSオフィシャル</a></li></ul><p><small>この部分は、管理画面の [設定] → [ユーティリティ] → [ウィジェットエリア] → [標準サイドバー] より編集できます。</small></p></div>
+</div>
+		</section>
+
+	</div>
+
+	<!-- /Elements/footer.php -->
+	
+
+<footer class="bs-footer">
+	<p class="bs-footer__copyright"> Copyright(C)
+		2008 - 2026    Theme Sample All rights Reserved.
+		<span class="bs-footer__banner">
+			<a href="https://basercms.net/" target="_blank" class="bs-footer__banner-link"><img src="/baser_core/img/baser.power.gif" alt="baserCMS : Based Website Development Project"></a>&nbsp;
+			<a href="https://cakephp.org/" target="_blank" class="bs-footer__banner-link"><img src="/img/cake.power.gif" alt="CakePHP(tm) : Rapid Development Framework"></a>
+		</span>
+	</p>
+</footer>
+
+</div>
+
 </body>
 </html>

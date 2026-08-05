@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 	<meta charset="utf-8">	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
-	<title>お問い合わせ｜My Site</title>
+	<title>お問い合わせ｜メインサイト</title>
 	<meta name="description" content="">
 	<meta name="keywords" content="">
 	<link href="/favicon.ico" type="image/x-icon" rel="icon"><link href="/favicon.ico" type="image/x-icon" rel="shortcut icon">
@@ -54,7 +54,7 @@
 																					<li class="bs-global-menu-item li-level-1">
 						<a href="/news/" class="bs-global-menu-item--link">NEWS</a>											</li>
 																					<li class="bs-global-menu-item li-level-1">
-						<a href="/company" class="bs-global-menu-item--link">会社案内</a>											</li>
+						<a href="/about" class="bs-global-menu-item--link">会社案内</a>											</li>
 																					<li class="bs-global-menu-item li-level-1">
 						<a href="/service/" class="bs-global-menu-item--link">サービス</a>													<div class="bs-global-menu-sub">
 								
@@ -73,8 +73,6 @@
 						<a href="/contact/" class="bs-global-menu-item--link">お問い合わせ</a>											</li>
 																					<li class="bs-global-menu-item li-level-1">
 						<a href="/sample" class="bs-global-menu-item--link">サンプル</a>											</li>
-																					<li class="bs-global-menu-item li-level-1">
-						<a href="/business/" class="bs-global-menu-item--link">事業実績</a>											</li>
 										</ul>
 			</nav>
 
@@ -109,8 +107,7 @@
 
 <h3 class="bs-mail-title-sub">入力フォーム</h3>
 
-      <div class="bs-mail-description"><p>このコンテンツはメールフォーム機能により作られており、この文章については管理画面の [お問い合わせ] &rarr; [設定] より更新ができます。また、メールフォームは [コンテンツ管理] よりいくつでも作成することができます。</p>
-</div>
+      <div class="bs-mail-description"><p>このコンテンツはメールフォーム機能により作られており、この文章については管理画面の [お問い合わせ] &rarr; [設定] より更新ができます。また、メールフォームは [コンテンツ管理] よりいくつでも作成することができます。</p></div>
   
 <div class="bs-mail-form">
 		<!-- /Elements/mail_form.php -->
@@ -156,6 +153,13 @@
     </tr>
 </table>
 
+	
+
+  <div class="bs-mail-form-auth-captcha">
+    <div>
+      <img src="/contact/captcha/29295187" alt="認証画像" class="auth-captcha-image">            <input type="text" name="auth_captcha" size="25"/>      <input type="hidden" name="captcha_id" value="29295187"/>    </div>
+    <div>画像の文字を入力してください</div>
+      </div>
 
 <div class="bs-mail-form-submit">
 			<input name="resetdata" value="　取り消す　" type="reset" class="bs-button" />
